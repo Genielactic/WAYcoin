@@ -1,0 +1,39 @@
+pragma solidity ^0.5.0;
+
+contract CommunityToken {
+  // Define the name and symbol of the token
+  string public name = "Community Token";
+  string public symbol = "COMM";
+
+  // Define the total supply of the token
+  uint256 public totalSupply;
+
+  // Create a mapping to store the balance of each address
+  mapping (address => uint256) public balanceOf;
+
+  // Event to be emitted when the token is transferred
+  event Transfer(address indexed from, address indexed to, uint256 value);
+
+  // Constructor function to initialize the contract and issue the tokens
+  constructor(uint256 initialSupply) public {
+    balanceOf[msg.sender] = initialSupply;
+    totalSupply = initialSupply;
+  }
+
+  // Function to transfer tokens from one address to another
+  function transfer(address to, uint256 value) public {
+    require(balanceOf[msg.sender] >= value && value > 0, "Insufficient balance");
+    balanceOf[msg.sender] -= value;
+    balanceOf[to] += value;
+    emit Transfer(msg.sender, to, value);
+  }
+
+  // Function to reward musicians for their contributions to the community
+  function rewardMusicians(address[] musicians, uint256[] rewards) public {
+    require(musicians.length == rewards.length, "Invalid input");
+    for (uint256 i = 0; i < musicians.length; i++) {
+      balanceOf[musicians[i]] += rewards[i];
+      emit Transfer(msg.sender, musicians[i], rewards[i]);
+    }
+  }
+}
